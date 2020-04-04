@@ -88,34 +88,35 @@ void loop()
   // FSR
   int fsr = analogRead(fsrAnalogPin);
 
-  // Send all the data 
-  Serial.print(
-                String(flex[0]) + "," + 
-                String(flex[1]) + "," + 
-                String(flex[2]) + "," + 
-                String(flex[3]) + "," + 
-                String(flex[4]) + "," +
-                String(fsr) + "," +
-                String(GyroX) + "," + 
-                String(GyroY) + "," + 
-                String(GyroZ) + "," + 
-                String(AccX) + "," + 
-                String(AccY) + "," + 
-                String(AccZ) + "," + "\n");
-                
-  BTserial.print(
-                String(flex[0]) + "," + 
-                String(flex[1]) + "," + 
-                String(flex[2]) + "," + 
-                String(flex[3]) + "," + 
-                String(flex[4]) + "," +
-                String(fsr) + "," +
-                String(GyroX) + "," + 
-                String(GyroY) + "," + 
-                String(GyroZ) + "," + 
-                String(AccX) + "," + 
-                String(AccY) + "," + 
-                String(AccZ) + "," + "\n");
+  if(fsr > 100) //if fsr is pressed
+  {
+    // Send all the data 
+    Serial.print(
+                  String(flex[0]) + "," + 
+                  String(flex[1]) + "," + 
+                  String(flex[2]) + "," + 
+                  String(flex[3]) + "," + 
+                  String(flex[4]) + "," +
+                  String(GyroX) + "," + 
+                  String(GyroY) + "," + 
+                  String(GyroZ) + "," + 
+                  String(AccX) + "," + 
+                  String(AccY) + "," + 
+                  String(AccZ));
+                  
+    BTserial.print(
+                  String(flex[0]) + "," + 
+                  String(flex[1]) + "," + 
+                  String(flex[2]) + "," + 
+                  String(flex[3]) + "," + 
+                  String(flex[4]) + "," +
+                  String(GyroX) + "," + 
+                  String(GyroY) + "," + 
+                  String(GyroZ) + "," + 
+                  String(AccX) + "," + 
+                  String(AccY) + "," + 
+                  String(AccZ));
+  }
 
   delay(1000);
 }
