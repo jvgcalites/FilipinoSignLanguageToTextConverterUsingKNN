@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +34,10 @@ import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnOn, btnOff;
     TextView txtArduino, txtString, txtStringLength, sensorView0, sensorView1, sensorView2, sensorView3,
     sensorView4, sensorView5, sensorView6, sensorView7, sensorView8, sensorView9, sensorView10, label, accuracy;
+    TextView flex1, flex2, flex3, flex4, flex5, gyroX, gyroY, gyroZ, accX, accY, accZ;
+    TextView letter, label1, label2, label3, confidence1, confidence2, confidence3;
     Handler bluetoothIn;
 
     final int handlerState = 0;                        //used to identify handler message
@@ -58,24 +60,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
 
         //Link the buttons and textViews to respective views
-        btnOn = (Button) findViewById(R.id.buttonOn);
-        btnOff = (Button) findViewById(R.id.buttonOff);
         txtString = (TextView) findViewById(R.id.txtString);
         txtStringLength = (TextView) findViewById(R.id.testView1);
-        sensorView0 = (TextView) findViewById(R.id.sensorView0);
-        sensorView1 = (TextView) findViewById(R.id.sensorView1);
-        sensorView2 = (TextView) findViewById(R.id.sensorView2);
-        sensorView3 = (TextView) findViewById(R.id.sensorView3);
-        sensorView4 = (TextView) findViewById(R.id.sensorView4);
-        sensorView5 = (TextView) findViewById(R.id.sensorView5);
-        sensorView6 = (TextView) findViewById(R.id.sensorView6);
-        sensorView7 = (TextView) findViewById(R.id.sensorView7);
-        sensorView8 = (TextView) findViewById(R.id.sensorView8);
-        sensorView9 = (TextView) findViewById(R.id.sensorView9);
-        sensorView10 = (TextView) findViewById(R.id.sensorView10);
-        label = (TextView) findViewById((R.id.label));
-        accuracy = (TextView) findViewById(R.id.accuracy);
-
+        flex1 = (TextView) findViewById(R.id.FlexSensor1);
+        flex2 = (TextView) findViewById(R.id.FlexSensor2);
+        flex3 = (TextView) findViewById(R.id.FlexSensor3);
+        flex4 = (TextView) findViewById(R.id.FlexSensor4);
+        flex5 = (TextView) findViewById(R.id.FlexSensor5);
+        gyroX = (TextView) findViewById(R.id.GyroX);
+        gyroY = (TextView) findViewById(R.id.GyroY);
+        gyroZ = (TextView) findViewById(R.id.GyroZ);
+        accX = (TextView) findViewById(R.id.AccelerometerX);
+        accY = (TextView) findViewById(R.id.AccelerometerY);
+        accZ = (TextView) findViewById(R.id.AcceleromterZ);
+        letter = (TextView) findViewById(R.id.text_letter);
+        label1 = (TextView) findViewById(R.id.text_label1);
+        label2 = (TextView) findViewById(R.id.text_label2);
+        label3 = (TextView) findViewById(R.id.text_label3);
+        confidence1 = (TextView) findViewById(R.id.text_confidence1);
+        confidence2 = (TextView) findViewById(R.id.text_confidence2);
+        confidence3 = (TextView) findViewById(R.id.text_confidence3);
 
         bluetoothIn = new Handler() {
             @SuppressLint("HandlerLeak")
@@ -105,30 +109,18 @@ public class MainActivity extends AppCompatActivity {
                             String ax = values[8];
                             String ay = values[9];
                             String az = values[10];
-                            /*
-                            String f1 = recDataString.substring(1, 7);
-                            String f2 = recDataString.substring(8, 14);
-                            String f3 = recDataString.substring(15, 21);
-                            String f4 = recDataString.substring(22, 28);
-                            String f5 = recDataString.substring(29, 35);
-                            String gx = recDataString.substring(36, 41);
-                            String gy = recDataString.substring(42, 47);
-                            String gz = recDataString.substring(48, 53);
-                            String ax = recDataString.substring(54, 59);
-                            String ay = recDataString.substring(60, 65);
-                            String az = recDataString.substring(66, 71);
-                            */
-                            sensorView0.setText(" F1 = " + f1);
-                            sensorView1.setText(" F2 = " + f2);
-                            sensorView2.setText(" F3 = " + f3);
-                            sensorView3.setText(" F4 = " + f4);
-                            sensorView4.setText(" F5 = " + f5);
-                            sensorView5.setText(" Gx = " + gx);
-                            sensorView6.setText(" Gy = " + gy);
-                            sensorView7.setText(" Gz = " + gz);
-                            sensorView8.setText(" Ax = " + ax);
-                            sensorView9.setText(" Ay = " + ay);
-                            sensorView10.setText(" Az = " + az);
+
+                            flex1.setText(" F1 = " + f1);
+                            flex2.setText(" F2 = " + f2);
+                            flex3.setText(" F3 = " + f3);
+                            flex4.setText(" F4 = " + f4);
+                            flex5.setText(" F5 = " + f5);
+                            gyroX.setText(" Gx = " + gx);
+                            gyroY.setText(" Gy = " + gy);
+                            gyroZ.setText(" Gz = " + gz);
+                            accX.setText(" Ax = " + ax);
+                            accY.setText(" Ay = " + ay);
+                            accZ.setText(" Az = " + az);
 
                             double flex1, flex2, flex3, flex4, flex5, gyrox, gyroy, gyroz, accx, accy, accz;
                             flex1 = Double.parseDouble(f1);
@@ -227,24 +219,49 @@ public class MainActivity extends AppCompatActivity {
                                     hshmap.put(str, 1); // else insert it in the map.
                             }
                             // Traverse the map for the maximum value.
-                            String max_str = "";
-                            int maxVal = 0;
-                            for (Map.Entry<String,Integer> entry : hshmap.entrySet())
-                            {
-                                String key = entry.getKey();
-                                Integer count = entry.getValue();
-                                if (count > maxVal)
+                            String[] label = new String[3];
+                            int[] value = new int[3];
+
+                            String max_str;
+                            int maxVal;
+                            for(int ctr = 0; ctr < 3 ; ctr++){
+                                max_str = "";
+                                maxVal = 0;
+                                for (Map.Entry<String,Integer> entry : hshmap.entrySet())
                                 {
-                                    maxVal = count;
-                                    max_str = key;
+                                    String key = entry.getKey();
+                                    Integer count = entry.getValue();
+                                    if (count > maxVal)
+                                    {
+                                        maxVal = count;
+                                        max_str = key;
+                                    }
+                                    // Condition for the tie.
+                                    else if (count == maxVal && max_str.compareTo(key) > 0)
+                                        max_str = key;
                                 }
-                                // Condition for the tie.
-                                else if (count == maxVal && max_str.compareTo(key) > 0)
-                                    max_str = key;
+                                if(maxVal == 0) {
+                                    label[ctr] = "-";
+                                    value[ctr] = 0;
+                                }
+                                else {
+                                    label[ctr] = max_str;
+                                    value[ctr] = maxVal;
+                                }
+                                hshmap.remove(max_str);
                             }
-                            double acc = (maxVal/(double)k)*100;
-                            label.setText("Label = " + max_str);
-                            accuracy.setText("Accuracy = " + acc + "%");
+                            double conf1 = (value[0]/(double)k)*100;
+                            double conf2 = (value[1]/(double)k)*100;
+                            double conf3 = (value[2]/(double)k)*100;
+                            //print the text to ui
+                            letter.setText(label[0]);
+                            label1.setText("1.    " + label[0]);
+                            label2.setText("2.    " + label[1]);
+                            label3.setText("3.    " + label[2]);
+                            DecimalFormat df2 = new DecimalFormat("#.##");
+                            confidence1.setText(df2.format(conf1) + "%");
+                            confidence2.setText(df2.format(conf2) + "%");
+                            confidence3.setText(df2.format(conf3) + "%");
                         }
                         recDataString.delete(0, recDataString.length());                    //clear all string data
                         // strIncom =" ";
@@ -256,21 +273,6 @@ public class MainActivity extends AppCompatActivity {
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();       // get Bluetooth adapter
         checkBTState();
-
-        // Set up onClick listeners for buttons to send 1 or 0 to turn on/off LED
-        btnOff.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                mConnectedThread.write("0");    // Send "0" via Bluetooth
-                Toast.makeText(getBaseContext(), "Turn off LED", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        btnOn.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                mConnectedThread.write("1");    // Send "1" via Bluetooth
-                Toast.makeText(getBaseContext(), "Turn on LED", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
