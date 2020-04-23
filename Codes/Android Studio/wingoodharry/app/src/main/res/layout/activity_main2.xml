@@ -109,7 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/GloveSensorValues"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="40dp"
         android:text="Flex Sensors" />
 
     <TextView
@@ -118,7 +118,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/FlexSensor"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="40dp"
         android:text="F1 = ??????.??" />
 
     <TextView
@@ -127,7 +127,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/FlexSensor1"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="40dp"
         android:text="F2 = ??????.??" />
 
     <TextView
@@ -136,7 +136,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/FlexSensor2"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="40dp"
         android:text="F3 = ??????.??" />
 
     <TextView
@@ -145,7 +145,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/FlexSensor3"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="40dp"
         android:text="F4 = ??????.??" />
 
     <TextView
@@ -154,7 +154,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/FlexSensor4"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="40dp"
         android:text="F5 = ??????.??" />
     <!--GyroScope-->
     <TextView
@@ -204,7 +204,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginLeft="40dp"
         android:layout_centerHorizontal="true"
-        android:text="Flex Sensors" />
+        android:text="Accelerometer" />
 
     <TextView
         android:id="@+id/AccelerometerX"
