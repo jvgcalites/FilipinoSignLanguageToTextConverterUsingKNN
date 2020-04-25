@@ -1,12 +1,8 @@
 package com.example.wingoodharry;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,26 +14,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView txtArduino, txtString, txtStringLength, sensorView0, sensorView1, sensorView2, sensorView3,
-    sensorView4, sensorView5, sensorView6, sensorView7, sensorView8, sensorView9, sensorView10, label, accuracy;
-    TextView flex1, flex2, flex3, flex4, flex5, gyroX, gyroY, gyroZ, accX, accY, accZ;
+    // Text Views
     TextView letter, label1, label2, label3, confidence1, confidence2, confidence3;
+    TextView flex1, flex2, flex3, flex4, flex5, gyroX, gyroY, gyroZ, accX, accY, accZ;
+    TextView txtString, txtStringLength;
+
     Handler bluetoothIn;
 
     final int handlerState = 0;                        //used to identify handler message
@@ -59,45 +50,49 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main2);
 
-        //Link the buttons and textViews to respective views
-        txtString = (TextView) findViewById(R.id.txtString);
-        txtStringLength = (TextView) findViewById(R.id.testView1);
-        flex1 = (TextView) findViewById(R.id.FlexSensor1);
-        flex2 = (TextView) findViewById(R.id.FlexSensor2);
-        flex3 = (TextView) findViewById(R.id.FlexSensor3);
-        flex4 = (TextView) findViewById(R.id.FlexSensor4);
-        flex5 = (TextView) findViewById(R.id.FlexSensor5);
-        gyroX = (TextView) findViewById(R.id.GyroX);
-        gyroY = (TextView) findViewById(R.id.GyroY);
-        gyroZ = (TextView) findViewById(R.id.GyroZ);
-        accX = (TextView) findViewById(R.id.AccelerometerX);
-        accY = (TextView) findViewById(R.id.AccelerometerY);
-        accZ = (TextView) findViewById(R.id.AcceleromterZ);
-        letter = (TextView) findViewById(R.id.text_letter);
-        label1 = (TextView) findViewById(R.id.text_label1);
-        label2 = (TextView) findViewById(R.id.text_label2);
-        label3 = (TextView) findViewById(R.id.text_label3);
-        confidence1 = (TextView) findViewById(R.id.text_confidence1);
-        confidence2 = (TextView) findViewById(R.id.text_confidence2);
-        confidence3 = (TextView) findViewById(R.id.text_confidence3);
+        // Link the buttons and textViews to respective views
+        txtString = findViewById(R.id.txtString);
+        txtStringLength = findViewById(R.id.testView1);
+        flex1 = findViewById(R.id.FlexSensor1);
+        flex2 = findViewById(R.id.FlexSensor2);
+        flex3 = findViewById(R.id.FlexSensor3);
+        flex4 = findViewById(R.id.FlexSensor4);
+        flex5 = findViewById(R.id.FlexSensor5);
+        gyroX = findViewById(R.id.GyroX);
+        gyroY = findViewById(R.id.GyroY);
+        gyroZ = findViewById(R.id.GyroZ);
+        accX = findViewById(R.id.AccelerometerX);
+        accY = findViewById(R.id.AccelerometerY);
+        accZ = findViewById(R.id.AcceleromterZ);
+        letter = findViewById(R.id.text_letter);
+        label1 = findViewById(R.id.text_label1);
+        label2 = findViewById(R.id.text_label2);
+        label3 = findViewById(R.id.text_label3);
+        confidence1 = findViewById(R.id.text_confidence1);
+        confidence2 = findViewById(R.id.text_confidence2);
+        confidence3 = findViewById(R.id.text_confidence3);
 
         bluetoothIn = new Handler() {
             @SuppressLint("HandlerLeak")
             public void handleMessage(android.os.Message msg) {
-                if (msg.what == handlerState) {                                     //if message is what we want
-                    String readMessage = (String) msg.obj;                                                                // msg.arg1 = bytes from connect thread
+                if (msg.what == handlerState) {                                             //if message is what we want
+                    String readMessage = (String) msg.obj;                                  // msg.arg1 = bytes from connect thread
                     recDataString.append(readMessage);                                      //keep appending to string until ~
-                    int endOfLineIndex = recDataString.indexOf("~");                    // determine the end-of-line
-                    if (endOfLineIndex > 0) {                                           // make sure there data before ~
+                    int endOfLineIndex = recDataString.indexOf("~");                        // determine the end-of-line
+                    if (endOfLineIndex > 0) {                                               // make sure there data before ~
                         String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
                         txtString.setText("Data Received = " + dataInPrint);
-                        int dataLength = dataInPrint.length();                          //get length of data received
+                        int dataLength = dataInPrint.length();                              //get length of data received
                         txtStringLength.setText("String Length = " + String.valueOf(dataLength));
 
-                        if (recDataString.charAt(0) == '#')                             //if it starts with # we know it is what we are looking for
+                        //if it starts with # we know it is what we are looking for
+                        if (recDataString.charAt(0) == '#')
                         {
+                            // Parse the packet String into array of characters
                             String packet = recDataString.substring(1, endOfLineIndex);
                             String[] values = packet.split(",");
+
+                            // Store the values in the array into variables
                             String f1 = values[0];
                             String f2 = values[1];
                             String f3 = values[2];
@@ -110,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                             String ay = values[9];
                             String az = values[10];
 
+                            // Set the textViews and show their values
                             flex1.setText(" F1 = " + f1);
                             flex2.setText(" F2 = " + f2);
                             flex3.setText(" F3 = " + f3);
@@ -122,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
                             accY.setText(" Ay = " + ay);
                             accZ.setText(" Az = " + az);
 
+                            // Convert the string values into double, and store it into an array
+                            // This will be the input for KNN
                             double flex1, flex2, flex3, flex4, flex5, gyrox, gyroy, gyroz, accx, accy, accz;
                             flex1 = Double.parseDouble(f1);
                             flex2 = Double.parseDouble(f2);
@@ -135,21 +133,20 @@ public class MainActivity extends AppCompatActivity {
                             accy = Double.parseDouble(ay);
                             accz = Double.parseDouble(az);
                             double[] testfeatures = {flex1, flex2, flex3, flex4, flex5, gyrox, gyroy, gyroz, accx, accy, accz};
+
+                            // Prepare the trained features and label values
+                            // Get it from the text file and store it in a List
                             List<double[]> trainfeatures = new ArrayList<>();
                             List<String> trainlabel = new ArrayList<>();
                             BufferedReader reader = null;
                             try {
-                                reader = new BufferedReader(
-                                        new InputStreamReader(getAssets().open("dataset.txt"), "UTF-8"));
-
-                                // do reading, usually loop until end of file reading
                                 String line;
+                                reader = new BufferedReader(new InputStreamReader(getAssets().open("dataset.txt"), "UTF-8"));
+                                // Do reading, usually loop until end of file reading
+                                // Once the loop ended, the values of trained features and labels are stored in the lists
                                 while ((line = reader.readLine()) != null) {
-                                    //process line
-                                    String[] split = line.split(","); // this contains all the values and labels
-                                    //System.out.print(split);
-                                    double[] feature = new double[split.length - 1]; // this contains the values only, no labels
-                                    //System.out.print(feature);
+                                    String[] split = line.split(",");
+                                    double[] feature = new double[split.length - 1];
                                     for (int i = 0; i < split.length - 1; i++)
                                         feature[i] = Double.parseDouble(split[i]);
                                     trainfeatures.add(feature);
@@ -166,23 +163,27 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                            //get the distance between test values and each trained values.
+
+                            // The data preparation is done, its time for computation
+                            // Get the distance between test values and each trained values.
                             double[][] distanceList = new double[trainfeatures.size()][2];
                             for(int index = 0; index < trainfeatures.size(); index++) {
                                 //compute the distance
                                 double[] features1 = trainfeatures.get(index);
                                 double sum = 0;
                                 for (int i = 0; i < features1.length; i++)
-                                {  //System.out.println(features1[i]+" "+features2[i]);
+                                {
                                     //applied Euclidean distance formula
                                     sum += Math.pow(features1[i] - testfeatures[i], 2);
                                 }
                                 double distance = Math.sqrt(sum);
+
                                 //add the computed distance in the list
                                 distanceList[index][0] = distance;
                                 distanceList[index][1] = index;
                             }
-                            //sort that list from least to greatest
+
+                            // Sort the list of distances
                             for(int i = 0; i < distanceList.length; i++)
                             {
                                 for(int j = 0; j < distanceList.length -1; j++)
@@ -200,15 +201,17 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                            //get the "k" index and their label
+
+                            // Get the top "K" index in the distance lists.
+                            // Then store the labels in a List of string
                             int k = 11;
                             List<String> targets = new ArrayList<>();
                             for(int i = 0; i < k; i++)
                             {
-                                //get the trained label of the current index from the list of distance
                                 targets.add(trainlabel.get((int)distanceList[i][1]));
                             }
-                            //get the most number of label in the list.
+
+                            // Get the most number of label in the list.
                             // Insert all unique strings and update count if a string is not unique.
                             Map<String,Integer> hshmap = new HashMap<String, Integer>();
                             for (String str : targets)
@@ -218,15 +221,17 @@ public class MainActivity extends AppCompatActivity {
                                 else
                                     hshmap.put(str, 1); // else insert it in the map.
                             }
-                            // Traverse the map for the maximum value.
+
+                            // Use for storing the top 3 labels and their counts
                             String[] label = new String[3];
                             int[] value = new int[3];
 
-                            String max_str;
-                            int maxVal;
+                            // Loop 3 times
                             for(int ctr = 0; ctr < 3 ; ctr++){
-                                max_str = "";
-                                maxVal = 0;
+                                String max_str = "";
+                                int maxVal = 0;
+
+                                // Traverse the map for the highest count of labels.
                                 for (Map.Entry<String,Integer> entry : hshmap.entrySet())
                                 {
                                     String key = entry.getKey();
@@ -240,20 +245,26 @@ public class MainActivity extends AppCompatActivity {
                                     else if (count == maxVal && max_str.compareTo(key) > 0)
                                         max_str = key;
                                 }
+
+                                // Check if there is no more label found
+                                // Else, store the key and value in the lists
                                 if(maxVal == 0) {
                                     label[ctr] = "-";
                                     value[ctr] = 0;
-                                }
-                                else {
+                                } else {
                                     label[ctr] = max_str;
                                     value[ctr] = maxVal;
                                 }
+                                // Remove the highest value in the hashmap
                                 hshmap.remove(max_str);
                             }
+
+                            // Compute for the confidence level of the top 3 labels
                             double conf1 = (value[0]/(double)k)*100;
                             double conf2 = (value[1]/(double)k)*100;
                             double conf3 = (value[2]/(double)k)*100;
-                            //print the text to ui
+
+                            // Print the text to UI
                             letter.setText(label[0]);
                             label1.setText("1.    " + label[0]);
                             label2.setText("2.    " + label[1]);
@@ -278,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
 
         return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-        //creates secure outgoing connecetion with BT device using UUID
+        //creates secure outgoing connection with BT device using UUID
     }
 
     @Override
@@ -288,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
         //Get MAC address from DeviceListActivity via intent
         Intent intent = getIntent();
 
-        //Get the MAC address from the DeviceListActivty via EXTRA
+        //Get the MAC address from the DeviceListActivity via EXTRA
         address = intent.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 
         //create device and set the MAC address
