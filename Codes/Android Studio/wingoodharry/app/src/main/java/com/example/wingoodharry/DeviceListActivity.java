@@ -19,6 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class DeviceListActivity extends AppCompatActivity {
 
+    private static final String TAG = "DeviceListActivity";
     //An EXTRA to take the device MAC to the next activity
     public static String EXTRA_DEVICE_ADDRESS;
 
@@ -29,6 +30,9 @@ public class DeviceListActivity extends AppCompatActivity {
     // Member fields
     private BluetoothAdapter mBtAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
+
+    // For determining where activity to go
+    private static String key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -60,9 +64,11 @@ public class DeviceListActivity extends AppCompatActivity {
         //It is best to check BT status at onResume in case something has changed while app was paused etc
         checkBTState();
 
-        mPairedDevicesArrayAdapter.clear();// clears the array so items aren't duplicated when resuming from onPause
+        // clears the array so items aren't duplicated when resuming from onPause
+        mPairedDevicesArrayAdapter.clear();
 
-        textConnectionStatus.setText(" "); //makes the textview blank
+        //makes the textview blank
+        textConnectionStatus.setText(" ");
 
         // Get the local Bluetooth adapter
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -104,14 +110,35 @@ public class DeviceListActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3)
         {
             textConnectionStatus.setText("Connecting...");
+
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
 
-            // Make an intent to start next activity while taking an extra which is the MAC address.
-            Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
-            i.putExtra(EXTRA_DEVICE_ADDRESS, address);
-            startActivity(i);
+            // Get the current intent
+            Intent intent = getIntent();
+
+            // Get the attached extras from the intent
+            key = intent.getStringExtra(MainMenu.KEY);
+
+            // Variables for key comparison
+            String classify = "classify";
+            String type  = "type";
+
+            // The key determines where will be the next activity
+            if(classify.equals(key)){
+                // Make an intent to start next activity while taking an extra which is the MAC address.
+                Intent intent1 = new Intent(DeviceListActivity.this, MainActivity.class);
+                intent1.putExtra(EXTRA_DEVICE_ADDRESS, address);
+                startActivity(intent1);
+            } else if (type.equals(key)){
+                // Make an intent to start next activity while taking an extra which is the MAC address.
+                Intent intent2 = new Intent(DeviceListActivity.this, GestureTyping.class);
+                intent2.putExtra(EXTRA_DEVICE_ADDRESS, address);
+                startActivity(intent2);
+            } else {
+                Toast.makeText(getBaseContext(), key, Toast.LENGTH_SHORT).show();
+            }
         }
     };
 }

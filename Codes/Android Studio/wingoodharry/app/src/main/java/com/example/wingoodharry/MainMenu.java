@@ -8,6 +8,8 @@ import android.view.View;
 
 public class MainMenu extends AppCompatActivity {
 
+    public static String KEY;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,11 +19,30 @@ public class MainMenu extends AppCompatActivity {
     public void gestureClassifer(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, DeviceListActivity.class);
+
+        // Attach the key value pair using putExtra to this intent
+        String key = "classify";
+        intent.putExtra(KEY, key);
+
+        // Starting the activity
         startActivity(intent);
     }
 
     /** Called when the user taps the Send button */
     public void gestureTyping(View view) {
-        // Do something in response to button
+        // Creating and intializing Intent object
+        Intent intent = new Intent(this, DeviceListActivity.class);
+
+        // Attach the key value pair using putExtra to this intent
+        String key= "type";
+        intent.putExtra(KEY, key);
+
+        // Starting the Activity
+        startActivity(intent);
+    }
+
+    public void showStats(View view) {
+         Intent intent = new Intent(this, StatsActivity.class);
+         startActivity(intent);
     }
 }

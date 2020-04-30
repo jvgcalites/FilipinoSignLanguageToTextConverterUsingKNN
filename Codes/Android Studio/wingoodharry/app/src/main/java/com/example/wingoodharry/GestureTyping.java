@@ -1,25 +1,15 @@
 package com.example.wingoodharry;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.os.Bundle;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -27,16 +17,35 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity {
+public class GestureTyping extends AppCompatActivity implements CompleteDialog.ExampleDialogListener {
 
-    private static final String TAG = "MainActivity";
+    // Log Tag
+    private static final String TAG = "GestureTyping";
+    private static final String FILE_NAME = "gameData.txt";
 
     // Text Views
-    TextView letter, label1, label2, label3, confidence1, confidence2, confidence3;
-    TextView flex1, flex2, flex3, flex4, flex5, gyroX, gyroY, gyroZ, accX, accY, accZ;
-    TextView txtString, txtStringLength;
-    TextView sentence;
+    TextView letter, label1, label2, label3;
+    TextView confidence1, confidence2, confidence3;
+    TextView sentence, timer;
 
     Handler bluetoothIn;
     final int handlerState = 0;                        //used to identify handler message
@@ -47,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
     // Contains the string received from Bluetooth
     private StringBuilder recDataString = new StringBuilder();
 
-    // Create Thread
-    private ConnectedThread mConnectedThread;
+    // Threads
+    private GestureTyping.ConnectedThread mConnectedThread;
+    private Timer timerThread;
 
     // SPP UUID service - this should work for most devices
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -56,32 +66,22 @@ public class MainActivity extends AppCompatActivity {
     // String for MAC address
     private static String address;
 
-    public int counter = 0;
+    private int counter;
+    private int seconds;
+    private boolean isComplete;
+    private String givenSentence;
+    private double speed, accuracy;
+    private int totalEntries;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_gesture_typing);
 
         Log.i(TAG, "tag_onCreate");
-
-        sentence = findViewById(R.id.sentence);
-
         // Link the buttons and textViews to respective views
-        txtString = findViewById(R.id.txtString);
-        txtStringLength = findViewById(R.id.testView1);
-        flex1 = findViewById(R.id.FlexSensor1);
-        flex2 = findViewById(R.id.FlexSensor2);
-        flex3 = findViewById(R.id.FlexSensor3);
-        flex4 = findViewById(R.id.FlexSensor4);
-        flex5 = findViewById(R.id.FlexSensor5);
-        gyroX = findViewById(R.id.GyroX);
-        gyroY = findViewById(R.id.GyroY);
-        gyroZ = findViewById(R.id.GyroZ);
-        accX = findViewById(R.id.AccelerometerX);
-        accY = findViewById(R.id.AccelerometerY);
-        accZ = findViewById(R.id.AcceleromterZ);
+        timer = findViewById(R.id.timer);
+        sentence = findViewById(R.id.sentence);
         letter = findViewById(R.id.text_letter);
         label1 = findViewById(R.id.text_label1);
         label2 = findViewById(R.id.text_label2);
@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         confidence1 = findViewById(R.id.text_confidence1);
         confidence2 = findViewById(R.id.text_confidence2);
         confidence3 = findViewById(R.id.text_confidence3);
+
+        initializeActivity();
 
         bluetoothIn = new Handler() {
             @SuppressLint("HandlerLeak")
@@ -98,11 +100,6 @@ public class MainActivity extends AppCompatActivity {
                     recDataString.append(readMessage);                                      //keep appending to string until ~
                     int endOfLineIndex = recDataString.indexOf("~");                        // determine the end-of-line
                     if (endOfLineIndex > 0) {                                               // make sure there data before ~
-                        String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
-                        txtString.setText("Data Received = " + dataInPrint);
-                        int dataLength = dataInPrint.length();                              //get length of data received
-                        txtStringLength.setText("String Length = " + String.valueOf(dataLength));
-
                         //if it starts with # we know it is what we are looking for
                         if (recDataString.charAt(0) == '#')
                         {
@@ -122,19 +119,6 @@ public class MainActivity extends AppCompatActivity {
                             String ax = values[8];
                             String ay = values[9];
                             String az = values[10];
-
-                            // Set the textViews and show their values
-                            flex1.setText(" F1 = " + f1);
-                            flex2.setText(" F2 = " + f2);
-                            flex3.setText(" F3 = " + f3);
-                            flex4.setText(" F4 = " + f4);
-                            flex5.setText(" F5 = " + f5);
-                            gyroX.setText(" Gx = " + gx);
-                            gyroY.setText(" Gy = " + gy);
-                            gyroZ.setText(" Gz = " + gz);
-                            accX.setText(" Ax = " + ax);
-                            accY.setText(" Ay = " + ay);
-                            accZ.setText(" Az = " + az);
 
                             // Convert the string values into double, and store it into an array
                             // This will be the input for KNN
@@ -293,7 +277,8 @@ public class MainActivity extends AppCompatActivity {
                             confidence3.setText(df2.format(conf3) + "%");
 
                             //======================FOR TYPING GAME=============================//
-                            String text = "ABCDEFGHIKLMNOPQRSTUVWXY";
+                            Log.i(TAG, "tag_typingGame");
+                            String text = givenSentence;
 
                             //Convert Text to List of Characters
                             List<Character> charList = new ArrayList<>();
@@ -315,6 +300,10 @@ public class MainActivity extends AppCompatActivity {
                                 ss.setSpan(fcsGreen, 0, counter + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                                 // Increment counter
                                 counter++;
+                                //Check if it is the last letter
+                                if(counter == charList.size()){
+                                    isComplete = true;
+                                }
                             } else{
                                 if(counter == 0){
                                     // Change the color to red
@@ -326,13 +315,12 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
 
+                            totalEntries++;
                             sentence.setText(ss);
                             Log.i(TAG, "tag_handler");
 
                         }
                         recDataString.delete(0, recDataString.length());                    //clear all string data
-                        // strIncom =" ";
-                        dataInPrint = " ";
                     }
                 }
             }
@@ -340,6 +328,67 @@ public class MainActivity extends AppCompatActivity {
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();       // get Bluetooth adapter
         checkBTState();
+    }
+
+    public void initializeActivity(){
+        Log.i(TAG, "tag_initActivity");
+        // initialize variables
+        counter = 0;
+        seconds = 0;
+        isComplete = false;
+        givenSentence = "CC";
+        totalEntries = 0;
+
+        // create new timer thread
+        timerThread = new Timer();
+        new Thread(timerThread).start();
+
+        // prepare textviews
+        timer.setText("0");
+        sentence.setText(givenSentence);
+        letter.setText("-");
+        label1.setText("-");
+        label2.setText("-");
+        label3.setText("-");
+        confidence1.setText("-");
+        confidence2.setText("-");
+        confidence3.setText("-");
+    }
+
+    public void save(double speed, double accuracy, String date) {
+//        File file = new File(FILE_NAME);
+//        try {
+//            FileWriter fileWriter = new FileWriter(file, true);
+//            String content = speed + "," + accuracy + "," + date + "\n";
+//            fileWriter.write(content);
+//            fileWriter.close();
+//            Log.i(TAG, "SAVED");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        FileOutputStream fos = null;
+        try {
+            // to delete, use MODE_PRIVATE, then change to MODE_APPEND
+            fos = openFileOutput(FILE_NAME, MODE_APPEND);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String content = speed + "," + accuracy + "," + date + "\n";
+        byte[] bytesArray = content.getBytes();
+        try {
+            fos.write(bytesArray);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openDialog(){
+        CompleteDialog completeDialog = new CompleteDialog();
+        completeDialog.setSpeed(speed);
+        completeDialog.setAccuracy(accuracy);
+        completeDialog.show(getSupportFragmentManager(), "complete dialog");
+        Log.i(TAG, "tag_openDialog");
     }
 
     @Override
@@ -373,17 +422,17 @@ public class MainActivity extends AppCompatActivity {
                 //insert code to deal with this
             }
         }
-        mConnectedThread = new ConnectedThread(btSocket);
+
+        mConnectedThread = new GestureTyping.ConnectedThread(btSocket);
         mConnectedThread.start();
 
         //I send a character when resuming.beginning transmission to check device is connected
         //If it is not an exception will be thrown in the write method and finish() will be called
-        mConnectedThread.write("x");
+        // mConnectedThread.write("x");
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         Log.i(TAG, "tag_onPause");
         super.onPause();
         try
@@ -403,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Checks that the Android device Bluetooth is available and prompts to be turned on if off
     private void checkBTState() {
-
+        Log.i(TAG, "tag_checkBTState");
         if(btAdapter==null) {
             Toast.makeText(getBaseContext(), "Device does not support bluetooth", Toast.LENGTH_LONG).show();
         } else {
@@ -454,17 +503,96 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         //write method
-        public void write(String input) {
-            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
-            try {
-                mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
-            } catch (IOException e) {
-                //if you cannot write, close the application
-                Toast.makeText(getBaseContext(), "Connection Failure", Toast.LENGTH_LONG).show();
-                finish();
+//        public void write(String input) {
+//            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
+//            try {
+//                mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
+//            } catch (IOException e) {
+//                //if you cannot write, close the application
+//                Toast.makeText(getBaseContext(), "Connection Failure", Toast.LENGTH_LONG).show();
+//                finish();
+//
+//            }
+//        }
+    }
 
+    private class Timer implements Runnable{
+        @Override
+        public void run() {
+            while(!isComplete){
+                try {
+                    Thread.sleep(1000);  //1000ms = 1 sec
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            seconds++;
+                            timer.setText(String.valueOf(seconds));
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+
+            // compute for speed and accuracy
+            double wordChar = 5.00;
+            double minute = 60.00;
+            double wordsNum = (double) counter/wordChar;
+            double time = (double) seconds/minute;
+            speed = wordsNum/time;
+
+            // compute for accuracy
+            double acc = (double) counter/totalEntries;
+            accuracy = acc*100;
+
+            Log.i(TAG, "speed = " + speed);
+            Log.i(TAG, "accuracy = " + accuracy);
+            Log.i(TAG, "counter = " + counter);
+            Log.i(TAG, "totalEntries = " + totalEntries);
+
+            // save speed and accuracy
+            String currentDate;
+            currentDate = new SimpleDateFormat("MM/ dd/ yy", Locale.getDefault()).format(new Date());
+            Log.i(TAG, currentDate);
+            save(speed,accuracy,currentDate);
+            openDialog();
         }
     }
+    /*
+    private class FileStream implements Runnable {
+
+        @Override
+        public void run() {
+            FileOutputStream fileOutputStream = null;
+            fileOutputStream = openFileOutput(FILE_NAME, MODE_PRIVATE);
+            fileOutputStream.write();
+
+            FileOutputStream fos = null;
+
+            try {
+                fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
+                fos.write(Integer.parseInt(speed + "," + accuracy + "," + date));
+                Toast.makeText(this, "Saved to " + getFilesDir() + "/" + FILE_NAME,
+                        Toast.LENGTH_LONG).show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+        }
+    }
+
+     */
+
 }
 
