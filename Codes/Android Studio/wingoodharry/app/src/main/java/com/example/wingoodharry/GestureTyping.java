@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public class GestureTyping extends AppCompatActivity implements CompleteDialog.ExampleDialogListener {
@@ -48,9 +50,11 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
     TextView confidence1, confidence2, confidence3;
     TextView sentence, timer;
 
+    // Handler
     Handler bluetoothIn;
     final int handlerState = 0;                        //used to identify handler message
 
+    // Bluetooth
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
 
@@ -67,11 +71,22 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
     // String for MAC address
     private static String address;
 
+    // Serves as pointer of the current character location the user is typing
     private int counter;
+
+    // Game timer
     private int seconds;
+
+    // Checks if the game is complete
     private boolean isComplete;
+
+    // Sentence to type on
     private String givenSentence;
+
+    // TypeSpeed and Accuracy
     private double speed, accuracy;
+
+    // User's total character input
     private int totalEntries;
 
     @Override
@@ -230,7 +245,8 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
                             Log.i(TAG, "tag_handler");
 
                         }
-                        recDataString.delete(0, recDataString.length());                    //clear all string data
+                        //clear all string data
+                        recDataString.delete(0, recDataString.length());
                     }
                 }
             }
@@ -246,7 +262,11 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
         counter = 0;
         seconds = 0;
         isComplete = false;
-        givenSentence = "CC";
+        try {
+            givenSentence = generateSentence();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         totalEntries = 0;
 
         // create new timer thread
@@ -265,8 +285,33 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
         confidence3.setText("-");
     }
 
-    private String generateSentence() {
+    private String generateSentence() throws IOException {
         String generatedSentence = "" ;
+
+        // Generate random number from 0 to 5
+        Random random = new Random();
+        int fileNum = random.nextInt(5);
+        String fileName = Integer.toString(fileNum) + ".txt";
+
+        BufferedReader reader = null;
+        try {
+            String line;
+            reader = new BufferedReader(new InputStreamReader(
+                            getAssets().open(fileName), "UTF-8"));
+            while ((line = reader.readLine()) != null) {
+                generatedSentence = line;
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error: " + e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Error: " + e);
+                }
+            }
+        }
         return generatedSentence;
     }
 
