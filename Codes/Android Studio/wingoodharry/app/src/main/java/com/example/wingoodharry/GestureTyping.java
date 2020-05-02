@@ -41,6 +41,7 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
     // Log Tag
     private static final String TAG = "GestureTyping";
     private static final String FILE_NAME = "gameData.txt";
+    private static final String DATASET = "dataset.txt";
 
     // Text Views
     TextView letter, label1, label2, label3;
@@ -78,7 +79,6 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gesture_typing);
 
-        Log.i(TAG, "tag_onCreate");
         // Link the buttons and textViews to respective views
         timer = findViewById(R.id.timer);
         sentence = findViewById(R.id.sentence);
@@ -95,11 +95,11 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
         bluetoothIn = new Handler() {
             @SuppressLint("HandlerLeak")
             public void handleMessage(android.os.Message msg) {
-                if (msg.what == handlerState) {                                             //if message is what we want
-                    String readMessage = (String) msg.obj;                                  // msg.arg1 = bytes from connect thread
-                    recDataString.append(readMessage);                                      //keep appending to string until ~
-                    int endOfLineIndex = recDataString.indexOf("~");                        // determine the end-of-line
-                    if (endOfLineIndex > 0) {                                               // make sure there data before ~
+                if (msg.what == handlerState) {                        //if message is what we want
+                    String readMessage = (String) msg.obj;             // msg.arg1 = bytes from connect thread
+                    recDataString.append(readMessage);                 //keep appending to string until ~
+                    int endOfLineIndex = recDataString.indexOf("~");   // determine the end-of-line
+                    if (endOfLineIndex > 0) {                          // make sure there data before ~
                         //if it starts with # we know it is what we are looking for
                         if (recDataString.charAt(0) == '#')
                         {
@@ -120,165 +120,75 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
                             String ay = values[9];
                             String az = values[10];
 
-                            // Convert the string values into double, and store it into an array
-                            // This will be the input for KNN
-                            double flex1, flex2, flex3, flex4, flex5, gyrox, gyroy, gyroz, accx, accy, accz;
-                            flex1 = Double.parseDouble(f1);
-                            flex2 = Double.parseDouble(f2);
-                            flex3 = Double.parseDouble(f3);
-                            flex4 = Double.parseDouble(f4);
-                            flex5 = Double.parseDouble(f5);
-                            gyrox = Double.parseDouble(gx);
-                            gyroy = Double.parseDouble(gy);
-                            gyroz = Double.parseDouble(gz);
-                            accx = Double.parseDouble(ax);
-                            accy = Double.parseDouble(ay);
-                            accz = Double.parseDouble(az);
-                            double[] testfeatures = {flex1, flex2, flex3, flex4, flex5, gyrox, gyroy, gyroz, accx, accy, accz};
+                            // Create a classifier object
+                            Classifier classifier = new Classifier();
+
+                            // Prepare testFeatures inputs in the object
+                            classifier.setFlex1(f1);
+                            classifier.setFlex2(f2);
+                            classifier.setFlex3(f3);
+                            classifier.setFlex4(f4);
+                            classifier.setFlex5(f5);
+                            classifier.setGyroX(gx);
+                            classifier.setGyroY(gy);
+                            classifier.setGyroZ(gz);
+                            classifier.setAccX(ax);
+                            classifier.setAccY(ay);
+                            classifier.setAccZ(az);
 
                             // Prepare the trained features and label values
-                            // Get it from the text file and store it in a List
-                            List<double[]> trainfeatures = new ArrayList<>();
-                            List<String> trainlabel = new ArrayList<>();
                             BufferedReader reader = null;
                             try {
                                 String line;
-                                reader = new BufferedReader(new InputStreamReader(getAssets().open("dataset.txt"), "UTF-8"));
+                                // Get it from the text file and store it in a List
+                                reader = new BufferedReader(
+                                        new InputStreamReader(
+                                                getAssets().open(DATASET), "UTF-8"));
+
                                 // Do reading, usually loop until end of file reading
-                                // Once the loop ended, the values of trained features and labels are stored in the lists
                                 while ((line = reader.readLine()) != null) {
                                     String[] split = line.split(",");
                                     double[] feature = new double[split.length - 1];
+
+                                    // Store each line in an array
                                     for (int i = 0; i < split.length - 1; i++)
                                         feature[i] = Double.parseDouble(split[i]);
-                                    trainfeatures.add(feature);
-                                    trainlabel.add(split[feature.length]);
+
+                                    // Add the trained features and labels in the object
+                                    classifier.AddTrainedFeatures(feature);
+                                    classifier.AddTrainedLabel(split[feature.length]);
                                 }
                             } catch (IOException e) {
-                                //log the exception
+                                Log.e(TAG, "Error: " + e);
                             } finally {
                                 if (reader != null) {
                                     try {
                                         reader.close();
                                     } catch (IOException e) {
-                                        //log the exception
+                                        Log.e(TAG, "Error: " + e);
                                     }
                                 }
                             }
 
-                            // The data preparation is done, its time for computation
-                            // Get the distance between test values and each trained values.
-                            double[][] distanceList = new double[trainfeatures.size()][2];
-                            for(int index = 0; index < trainfeatures.size(); index++) {
-                                //compute the distance
-                                double[] features1 = trainfeatures.get(index);
-                                double sum = 0;
-                                for (int i = 0; i < features1.length; i++)
-                                {
-                                    //applied Euclidean distance formula
-                                    sum += Math.pow(features1[i] - testfeatures[i], 2);
-                                }
-                                double distance = Math.sqrt(sum);
+                            // Process the test inputs and trained inputs in the object
+                            classifier.Classify();
 
-                                //add the computed distance in the list
-                                distanceList[index][0] = distance;
-                                distanceList[index][1] = index;
-                            }
-
-                            // Sort the list of distances
-                            for(int i = 0; i < distanceList.length; i++)
-                            {
-                                for(int j = 0; j < distanceList.length -1; j++)
-                                {
-                                    if(distanceList[j][0] > distanceList[j+1][0])
-                                    {
-                                        //swap distance
-                                        double temp = distanceList[j][0];
-                                        distanceList[j][0] = distanceList[j+1][0];
-                                        distanceList[j+1][0] = temp;
-                                        //as well as label
-                                        double temp2 = distanceList[j][1];
-                                        distanceList[j][1] = distanceList[j+1][1];
-                                        distanceList[j+1][1] = temp2;
-                                    }
-                                }
-                            }
-
-                            // Get the top "K" index in the distance lists.
-                            // Then store the labels in a List of string
-                            int k = 11;
-                            List<String> targets = new ArrayList<>();
-                            for(int i = 0; i < k; i++)
-                            {
-                                targets.add(trainlabel.get((int)distanceList[i][1]));
-                            }
-
-                            // Get the most number of label in the list.
-                            // Insert all unique strings and update count if a string is not unique.
-                            Map<String,Integer> hshmap = new HashMap<String, Integer>();
-                            for (String str : targets)
-                            {
-                                if (hshmap.keySet().contains(str)) // if already exists then update count.
-                                    hshmap.put(str, hshmap.get(str) + 1);
-                                else
-                                    hshmap.put(str, 1); // else insert it in the map.
-                            }
-
-                            // Use for storing the top 3 labels and their counts
-                            String[] label = new String[3];
-                            int[] value = new int[3];
-
-                            // Loop 3 times
-                            for(int ctr = 0; ctr < 3 ; ctr++){
-                                String max_str = "";
-                                int maxVal = 0;
-
-                                // Traverse the map for the highest count of labels.
-                                for (Map.Entry<String,Integer> entry : hshmap.entrySet())
-                                {
-                                    String key = entry.getKey();
-                                    Integer count = entry.getValue();
-                                    if (count > maxVal)
-                                    {
-                                        maxVal = count;
-                                        max_str = key;
-                                    }
-                                    // Condition for the tie.
-                                    else if (count == maxVal && max_str.compareTo(key) > 0)
-                                        max_str = key;
-                                }
-
-                                // Check if there is no more label found
-                                // Else, store the key and value in the lists
-                                if(maxVal == 0) {
-                                    label[ctr] = "-";
-                                    value[ctr] = 0;
-                                } else {
-                                    label[ctr] = max_str;
-                                    value[ctr] = maxVal;
-                                }
-                                // Remove the highest value in the hashmap
-                                hshmap.remove(max_str);
-                            }
-
-                            // Compute for the confidence level of the top 3 labels
-                            double conf1 = (value[0]/(double)k)*100;
-                            double conf2 = (value[1]/(double)k)*100;
-                            double conf3 = (value[2]/(double)k)*100;
-
+                            // Get the label and confidence output from the object
                             // Print the text to UI
-                            letter.setText(label[0]);
-                            label1.setText("1.    " + label[0]);
-                            label2.setText("2.    " + label[1]);
-                            label3.setText("3.    " + label[2]);
+                            letter.setText(classifier.GetLabel(0));
+                            label1.setText("1.    " + classifier.GetLabel(0));
+                            label2.setText("2.    " + classifier.GetLabel(1));
+                            label3.setText("3.    " + classifier.GetLabel(2));
                             DecimalFormat df2 = new DecimalFormat("#.##");
-                            confidence1.setText(df2.format(conf1) + "%");
-                            confidence2.setText(df2.format(conf2) + "%");
-                            confidence3.setText(df2.format(conf3) + "%");
+                            confidence1.setText(df2.format(classifier.GetConfidence(0)) + "%");
+                            confidence2.setText(df2.format(classifier.GetConfidence(1)) + "%");
+                            confidence3.setText(df2.format(classifier.GetConfidence(2)) + "%");
+
 
                             //======================FOR TYPING GAME=============================//
                             Log.i(TAG, "tag_typingGame");
                             String text = givenSentence;
+                            String letter = classifier.GetLabel(0);
 
                             //Convert Text to List of Characters
                             List<Character> charList = new ArrayList<>();
@@ -292,7 +202,7 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
                             ForegroundColorSpan fcsGreen = new ForegroundColorSpan(Color.GREEN);
 
                             // The users input
-                            char input = label[0].charAt(0);
+                            char input = letter.charAt(0);
 
                             // Compare the users input to the specific character
                             if(input == charList.get(counter)){
@@ -355,18 +265,12 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
         confidence3.setText("-");
     }
 
-    public void save(double speed, double accuracy, String date) {
-//        File file = new File(FILE_NAME);
-//        try {
-//            FileWriter fileWriter = new FileWriter(file, true);
-//            String content = speed + "," + accuracy + "," + date + "\n";
-//            fileWriter.write(content);
-//            fileWriter.close();
-//            Log.i(TAG, "SAVED");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+    private String generateSentence() {
+        String generatedSentence = "" ;
+        return generatedSentence;
+    }
 
+    public void save(double speed, double accuracy, String date) {
         FileOutputStream fos = null;
         try {
             // to delete, use MODE_PRIVATE, then change to MODE_APPEND
@@ -428,7 +332,7 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
 
         //I send a character when resuming.beginning transmission to check device is connected
         //If it is not an exception will be thrown in the write method and finish() will be called
-        // mConnectedThread.write("x");
+        mConnectedThread.write("x");
     }
 
     @Override
@@ -445,9 +349,8 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-
-        return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
         //creates secure outgoing connection with BT device using UUID
+        return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
     }
 
     //Checks that the Android device Bluetooth is available and prompts to be turned on if off
@@ -492,7 +395,8 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
             while (true) {
                 try {
                     Log.i(TAG, "tag_firstThread");
-                    bytes = mmInStream.read(buffer);            //read bytes from input buffer
+                    //read bytes from input buffer
+                    bytes = mmInStream.read(buffer);
                     String readMessage = new String(buffer, 0, bytes);
                     // Send the obtained bytes to the UI Activity via handler
                     bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
@@ -503,17 +407,19 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
             }
         }
         //write method
-//        public void write(String input) {
-//            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
-//            try {
-//                mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
-//            } catch (IOException e) {
-//                //if you cannot write, close the application
-//                Toast.makeText(getBaseContext(), "Connection Failure", Toast.LENGTH_LONG).show();
-//                finish();
-//
-//            }
-//        }
+        public void write(String input) {
+            //converts entered String into bytes
+            byte[] msgBuffer = input.getBytes();
+            try {
+                //write bytes over BT connection via outstream
+                mmOutStream.write(msgBuffer);
+            } catch (IOException e) {
+                //if you cannot write, close the application
+                Toast.makeText(getBaseContext(), "Connection Failure", Toast.LENGTH_LONG).show();
+                finish();
+
+            }
+        }
     }
 
     private class Timer implements Runnable{
@@ -558,41 +464,5 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
             openDialog();
         }
     }
-    /*
-    private class FileStream implements Runnable {
-
-        @Override
-        public void run() {
-            FileOutputStream fileOutputStream = null;
-            fileOutputStream = openFileOutput(FILE_NAME, MODE_PRIVATE);
-            fileOutputStream.write();
-
-            FileOutputStream fos = null;
-
-            try {
-                fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
-                fos.write(Integer.parseInt(speed + "," + accuracy + "," + date));
-                Toast.makeText(this, "Saved to " + getFilesDir() + "/" + FILE_NAME,
-                        Toast.LENGTH_LONG).show();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (fos != null) {
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-
-        }
-    }
-
-     */
-
 }
 

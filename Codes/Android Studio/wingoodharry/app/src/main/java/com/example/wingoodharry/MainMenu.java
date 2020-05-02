@@ -1,7 +1,6 @@
 package com.example.wingoodharry;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,7 +14,7 @@ public class MainMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
     }
-    /** Called when the user taps the Send button */
+    /** Called when the user taps the GestureClassifying button */
     public void gestureClassifer(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, DeviceListActivity.class);
@@ -28,7 +27,7 @@ public class MainMenu extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /** Called when the user taps the Send button */
+    /** Called when the user taps the GestureTyping button */
     public void gestureTyping(View view) {
         // Creating and intializing Intent object
         Intent intent = new Intent(this, DeviceListActivity.class);
@@ -41,6 +40,7 @@ public class MainMenu extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /** Called when the user taps the ShowStats button */
     public void showStats(View view) {
          Intent intent = new Intent(this, StatsActivity.class);
          startActivity(intent);

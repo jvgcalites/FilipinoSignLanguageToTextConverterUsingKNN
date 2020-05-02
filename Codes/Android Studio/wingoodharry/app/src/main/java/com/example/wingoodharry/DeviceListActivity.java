@@ -2,16 +2,13 @@ package com.example.wingoodharry;
 
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Set;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class DeviceListActivity extends AppCompatActivity {
 
     private static final String TAG = "DeviceListActivity";
+
     //An EXTRA to take the device MAC to the next activity
     public static String EXTRA_DEVICE_ADDRESS;
 
@@ -83,7 +81,7 @@ public class DeviceListActivity extends AppCompatActivity {
                 mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         } else {
-            mPairedDevicesArrayAdapter.add("no devices paired");
+            mPairedDevicesArrayAdapter.add("No devices paired");
         }
     }
 
@@ -94,7 +92,8 @@ public class DeviceListActivity extends AppCompatActivity {
         // Check device has Bluetooth and that it is turned on
         mBtAdapter=BluetoothAdapter.getDefaultAdapter(); // CHECK THIS OUT THAT IT WORKS!!!
         if(mBtAdapter==null) {
-            Toast.makeText(getBaseContext(), "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(),
+                    "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
             finish();
         } else {
             if (!mBtAdapter.isEnabled()) {
@@ -109,7 +108,9 @@ public class DeviceListActivity extends AppCompatActivity {
     {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3)
         {
-            textConnectionStatus.setText("Connecting...");
+            //textConnectionStatus.setText("Connecting...");
+            Toast.makeText(getBaseContext(),
+                    "Connecting....", Toast.LENGTH_SHORT).show();
 
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();

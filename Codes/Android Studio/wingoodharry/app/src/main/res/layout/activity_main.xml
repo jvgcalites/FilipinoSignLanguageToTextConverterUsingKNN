@@ -4,17 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <TextView android:id="@+id/title_paired_devices"
+    <TextView
+        android:id="@+id/title_paired_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Select btSerial device from paired devices:"
+        android:text="Select HC-05 device from paired devices:"
         android:visibility="gone"
         android:background="#666"
         android:textColor="#fff"
         android:paddingLeft="5dp"
         />
-    <ListView android:id="@+id/paired_devices"
+    <ListView
+        android:id="@+id/paired_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stackFromBottom="false"
