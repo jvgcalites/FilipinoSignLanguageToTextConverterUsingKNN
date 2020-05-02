@@ -69,11 +69,9 @@ public class StatsActivity extends AppCompatActivity{
 
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/ dd/ yy");
 
-
         GraphView graph = findViewById(R.id.graph);
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(generateData(gameDataList));
         graph.addSeries(series);
-
 
         graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter()
         {
@@ -88,15 +86,16 @@ public class StatsActivity extends AppCompatActivity{
             }
         });
 
-
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(graph.getContext()));
         graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
         //graph.getGridLabelRenderer().setHumanRounding(false);
 
-        int count = gameDataList.size();
-        gamesPlayed.setText("Games Played: " + count);
-
-
+        Statistics statistics = new Statistics();
+        statistics.setSpeedAccuracyList(gameDataList);
+        gamesPlayed.setText("Games Played: " + statistics.getGamesPlayedCount());
+        speedRecord.setText("Speed Record: " + statistics.getSpeedRecord());
+        averageSpeed.setText("Average Speed: " + statistics.getAverageSpeed());
+        averageAccuracy.setText("Average Accuracy: " + statistics.getAverageAccuracy());
     }
 
     private Date stringToDate(String aDate,String aFormat) {
