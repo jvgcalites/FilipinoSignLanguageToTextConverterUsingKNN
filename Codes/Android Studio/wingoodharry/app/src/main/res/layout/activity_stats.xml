@@ -4,14 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="30dp"
+    android:padding="20dp"
     tools:context=".StatsActivity">
 
-    <com.jjoe64.graphview.GraphView
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/graph"
         android:layout_width="match_parent"
-        android:layout_height="200dip"
+        android:layout_height="500dip"
         android:layout_below="@+id/gameHistory"
-        android:id="@+id/graph" />
+        android:padding="10dp"
+        />
     <TextView
         android:id="@+id/gameHistory"
         android:layout_width="wrap_content"

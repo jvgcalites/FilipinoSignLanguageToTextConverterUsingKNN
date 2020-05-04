@@ -18,11 +18,8 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,10 +28,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -52,7 +47,9 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
 
     // Handler
     Handler bluetoothIn;
-    final int handlerState = 0;                        //used to identify handler message
+
+    // Use to identify handler message
+    final int handlerState = 0;
 
     // Bluetooth
     private BluetoothAdapter btAdapter = null;
@@ -71,7 +68,7 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
     // String for MAC address
     private static String address;
 
-    // Serves as pointer of the current character location the user is typing
+    // Serves as pointer of the current character the user is typing
     private int counter;
 
     // Game timer
@@ -220,7 +217,8 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
                             char input = letter.charAt(0);
 
                             // Compare the users input to the specific character
-                            if(input == charList.get(counter)){
+                            char currentCharacter = Character.toUpperCase(charList.get(counter));
+                            if(input == currentCharacter){
                                 // Change the color to green
                                 ss.setSpan(fcsGreen, 0, counter + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                                 // Increment counter
@@ -323,7 +321,8 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        String content = speed + "," + accuracy + "," + date + "\n";
+        String content =
+                String.format("%.2f",speed) + "," + String.format("%.2f",accuracy) + "," + date + "\n";
         byte[] bytesArray = content.getBytes();
         try {
             fos.write(bytesArray);
