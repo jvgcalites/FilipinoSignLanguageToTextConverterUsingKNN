@@ -1,5 +1,6 @@
 package com.example.wingoodharry;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -87,9 +88,21 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
     private int totalEntries;
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("counter", counter);
+        outState.putInt("seconds", seconds);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gesture_typing);
+
+        if (savedInstanceState != null) {
+            counter = savedInstanceState.getInt("counter");
+            seconds = savedInstanceState.getInt("seconds");
+        }
 
         // Link the buttons and textViews to respective views
         timer = findViewById(R.id.timer);
@@ -399,7 +412,6 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
 
     //Checks that the Android device Bluetooth is available and prompts to be turned on if off
     private void checkBTState() {
-        Log.i(TAG, "tag_checkBTState");
         if(btAdapter==null) {
             Toast.makeText(getBaseContext(), "Device does not support bluetooth", Toast.LENGTH_LONG).show();
         } else {
