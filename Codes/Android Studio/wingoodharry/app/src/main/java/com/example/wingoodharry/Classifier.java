@@ -28,7 +28,7 @@ public class Classifier {
     private double[] topThreeConfidence;
 
     public Classifier() {
-        this.k = 31;
+        this.k = 1;
         this.trainedFeatures = new ArrayList<>();
         this.trainedLabel = new ArrayList<>();
         this.targetLabels = new ArrayList<>();
