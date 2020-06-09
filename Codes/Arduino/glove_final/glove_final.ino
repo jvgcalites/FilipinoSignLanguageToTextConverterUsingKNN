@@ -91,7 +91,7 @@ void loop()
   if(fsr > 100) //if fsr is pressed
   {
     // Send all the data 
-    Serial.print(
+    Serial.println("#" +
                   String(flex[0]) + "," + 
                   String(flex[1]) + "," + 
                   String(flex[2]) + "," + 
@@ -102,9 +102,9 @@ void loop()
                   String(GyroZ) + "," + 
                   String(AccX) + "," + 
                   String(AccY) + "," + 
-                  String(AccZ));
+                  String(AccZ) + "~");
                   
-    BTserial.print(
+    BTserial.println("#" +
                   String(flex[0]) + "," + 
                   String(flex[1]) + "," + 
                   String(flex[2]) + "," + 
@@ -115,7 +115,7 @@ void loop()
                   String(GyroZ) + "," + 
                   String(AccX) + "," + 
                   String(AccY) + "," + 
-                  String(AccZ));
+                  String(AccZ) + "~");
   }
 
   delay(1000);

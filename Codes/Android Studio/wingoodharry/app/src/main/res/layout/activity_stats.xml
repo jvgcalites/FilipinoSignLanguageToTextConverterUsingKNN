@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    tools:context=".StatsActivity">
+
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/graph"
+        android:layout_width="match_parent"
+        android:layout_height="500dip"
+        android:layout_below="@+id/gameHistory"
+        android:padding="10dp"
+        />
+    <TextView
+        android:id="@+id/gameHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Game History"
+        android:textSize="25sp"
+        />
+    <TextView
+        android:id="@+id/statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Statistics"
+        android:layout_below="@+id/graph"
+        android:textSize="25sp"/>
+    <TextView
+        android:id="@+id/gamesPlayed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Games Played : ?"
+        android:layout_below="@+id/statistics"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/speedRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speed Record : ?"
+        android:layout_below="@+id/gamesPlayed"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/averageSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Average Speed : ?"
+        android:layout_below="@+id/speedRecord"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/averageAccuracy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Average Accuracy : ?"
+        android:layout_below="@+id/averageSpeed"
+        android:textSize="20sp"/>
+
+
+
+</RelativeLayout>

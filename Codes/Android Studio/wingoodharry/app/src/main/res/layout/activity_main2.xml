@@ -1,0 +1,256 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+
+    <TextView
+        android:id="@+id/text_letter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="A"
+        android:textSize="200dp"
+        />
+    <!--Labels-->
+    <TextView
+        android:id="@+id/text_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_letter"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="90dp"
+        android:text="Label" />
+
+    <TextView
+        android:id="@+id/text_label1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_label"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="90dp"
+        android:text="1.    ?" />
+
+    <TextView
+        android:id="@+id/text_label2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_label1"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="90dp"
+        android:text="2.    ?" />
+
+    <TextView
+        android:id="@+id/text_label3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_label2"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="90dp"
+        android:text="3.    ?" />
+
+
+    <!--Confidence-->
+    <TextView
+        android:id="@+id/text_confidence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_letter"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="90dp"
+        android:text="Confidence" />
+
+    <TextView
+        android:id="@+id/text_confidence1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_confidence"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="105dp"
+        android:text="33.33%" />
+
+    <TextView
+        android:id="@+id/text_confidence2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_label1"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="105dp"
+        android:text="33.33%" />
+
+    <TextView
+        android:id="@+id/text_confidence3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_label2"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="105dp"
+        android:text="33.33%" />
+    <!--Gloves' Sensor Values-->
+    <TextView
+        android:id="@+id/GloveSensorValues"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_label3"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:text="Gloves' Sensor Values" />
+    <!--Flex Sensor-->
+    <TextView
+        android:id="@+id/FlexSensor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/GloveSensorValues"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="40dp"
+        android:text="Flex Sensors" />
+
+    <TextView
+        android:id="@+id/FlexSensor1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/FlexSensor"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:text="F1 = ??????.??" />
+
+    <TextView
+        android:id="@+id/FlexSensor2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/FlexSensor1"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:text="F2 = ??????.??" />
+
+    <TextView
+        android:id="@+id/FlexSensor3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/FlexSensor2"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:text="F3 = ??????.??" />
+
+    <TextView
+        android:id="@+id/FlexSensor4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/FlexSensor3"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:text="F4 = ??????.??" />
+
+    <TextView
+        android:id="@+id/FlexSensor5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/FlexSensor4"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:text="F5 = ??????.??" />
+    <!--GyroScope-->
+    <TextView
+        android:id="@+id/Gyroscope"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/GloveSensorValues"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:text="Gyroscope" />
+
+    <TextView
+        android:id="@+id/GyroX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Gyroscope"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Gx = ?????" />
+
+    <TextView
+        android:id="@+id/GyroY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/GyroX"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Gy = ?????" />
+
+    <TextView
+        android:id="@+id/GyroZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/GyroY"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="Gz = ?????" />
+
+<!--Accelerometer-->
+
+    <TextView
+        android:id="@+id/Accelerometer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/GloveSensorValues"
+        android:layout_toRightOf="@id/Gyroscope"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="40dp"
+        android:layout_centerHorizontal="true"
+        android:text="Accelerometer" />
+
+    <TextView
+        android:id="@+id/AccelerometerX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Accelerometer"
+        android:layout_toRightOf="@id/Gyroscope"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:text="Ax = ?????" />
+    <TextView
+        android:id="@id/AccelerometerY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AccelerometerX"
+        android:layout_toRightOf="@id/Gyroscope"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:text="Ay = ?????" />
+
+    <TextView
+        android:id="@+id/AcceleromterZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AccelerometerY"
+        android:layout_toRightOf="@id/Gyroscope"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:text="Az = ?????" />
+
+    <TextView
+        android:id="@+id/testView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txtString"
+        android:text=""
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/txtString"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/testView1"
+        android:layout_alignParentBottom="true"
+        android:text=""
+        android:textSize="15sp" />
+
+</RelativeLayout>
