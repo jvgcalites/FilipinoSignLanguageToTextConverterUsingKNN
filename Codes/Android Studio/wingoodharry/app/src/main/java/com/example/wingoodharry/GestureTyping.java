@@ -214,6 +214,12 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
                             Log.i(TAG, "tag_typingGame");
                             String text = givenSentence;
                             String letter = classifier.GetLabel(0);
+                            Log.i(TAG, "letter" + letter);
+                            String space = "Space";
+                            if(letter.length() > 1){
+                                Log.i(TAG, "SPACE");
+                                letter = " ";
+                            }
 
                             //Convert Text to List of Characters
                             List<Character> charList = new ArrayList<>();
@@ -240,7 +246,7 @@ public class GestureTyping extends AppCompatActivity implements CompleteDialog.E
                                 if(counter == charList.size()){
                                     isComplete = true;
                                 }
-                            } else{
+                            } else {
                                 if(counter == 0){
                                     // Change the color to red
                                     ss.setSpan(fcsRed, counter, counter + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
