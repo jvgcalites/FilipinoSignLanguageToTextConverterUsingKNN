@@ -9,7 +9,6 @@ This project develops a glove that captures hand gestures and hand movements usi
 ## Typing Game
 Upon successfully implementing the basic functions of the prototype, an additional feature was added that would help in practicing the use of Filipino Sign Language. This feature is a simple fingerspelling test. The test will be like a touch-typing test, where a keyboard is used to type the words within a limited amount of time and a score is given. The only difference is that, instead of using a keyboard to type, the gloves will be used. The accuracy and speed of fingerspelling will be recorded, and in time, it will show whether the user improves or not.
 
-![typing-game](https://drive.google.com/uc?export=view&id=1cjByZlytUxK06cdIB4rYw1jHOXWq2eEK) | ![statistics](https://drive.google.com/uc?export=view&id=1cg8Tmr0L00VWmH1tMVTmJ2UI2xovaHaM)
+<img src="https://drive.google.com/uc?export=view&id=1cjByZlytUxK06cdIB4rYw1jHOXWq2eEK" width="108" height="234"/> | <img src="https://drive.google.com/uc?export=view&id=1cg8Tmr0L00VWmH1tMVTmJ2UI2xovaHaM" width="108" height="234"/> 
 
 For more detailed information, check out the [_*Paper*_](https://github.com/jvgcalites/FilipinoSignLanguageToTextConverterUsingKNN/tree/master/Paper) folder.
-
